@@ -3,21 +3,19 @@ import "winston-daily-rotate-file";
 
 export type LogLevel = "error" | "warn" | "info" | "debug";
 
-interface TransformableInfo {
+type TransformableInfo = {
   level: LogLevel;
-  timestamp: any;
-  message: any;
-  text: string;
-}
+  message: string;
+  timestamp: string;
+} & Record<string, unknown>;
 
 const customFormat = format.combine(
   format.timestamp({ format: "MMM-DD-YYYY HH:mm:ss" }),
-  format.align(),
-  format.printf((info: any) => {
-    const { level, message, timestamp, ...args } = info;
-    console.log(1213, info, args);
-
-    return `${level}: ${[timestamp]}: ${message} - ${JSON.stringify(args)}`;
+  format.json(),
+  format.printf((info: TransformableInfo | unknown) => {
+    // const { level, message, timestamp, ...args } = info;
+    // return `${level}: ${[timestamp]}: ${message} - ${JSON.stringify(args)}`;
+    return JSON.stringify(info);
   })
 );
 const defaultOptions = {
@@ -25,22 +23,21 @@ const defaultOptions = {
   datePattern: "YYYY-MM-DD",
   zippedArchive: true,
   maxSize: "20m",
-  maxFiles: "14d",
-  frequency: "1m",
-  meta: false, // 禁用元数据记录
-  //format: format.json()
+  // maxFiles: "14d",
+  frequency: "24h",
+  // meta: false, // 禁用元数据记录
+  meta: true,
 };
 
 const globalLogger = createLogger({
   format: customFormat,
   transports: [
-    // new transports.Console(), //将日志输出在控制台
-    new transports.DailyRotateFile({
+    new (transports as any).DailyRotateFile({
       filename: "logs/info-%DATE%.log",
       level: "info",
       ...defaultOptions,
     }),
-    new transports.DailyRotateFile({
+    new (transports as any).DailyRotateFile({
       filename: "logs/error-%DATE%.log",
       level: "error",
       ...defaultOptions,
@@ -48,7 +45,7 @@ const globalLogger = createLogger({
   ],
   exitOnError: false,
   exceptionHandlers: [
-    new transports.DailyRotateFile({
+    new (transports as any).DailyRotateFile({
       filename: "logs/exceptions.log",
     }),
   ],

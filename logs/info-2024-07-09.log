@@ -1,0 +1,13 @@
+{"message":"\t\tHome Page,[object Object]","level":"info","timestamp":"Jul-09-2024 17:55:11"}
+{"message":"\t\tHome Page,[object Object]","level":"info","timestamp":"Jul-09-2024 17:56:13"}
+{"message":"\t\tHome Page,[object Object]","level":"info","timestamp":"Jul-09-2024 17:56:16"}
+{"message":"\t\tHome Page,[object Object]","level":"info","timestamp":"Jul-09-2024 17:56:20"}
+{"message":["Home Page",{"page_name":"/home"}],"level":"info","timestamp":"Jul-09-2024 17:57:01"}
+{"message":[{"message":"Home Page","data":{"id":123123,"desc":"GET"}}],"level":"info","timestamp":"Jul-09-2024 17:57:57"}
+{"message":[{"message":"Home Page","data":{"id":123123,"desc":"GET"}}],"level":"info","timestamp":"Jul-09-2024 17:58:16"}
+{"message":[{"message":"Home Page","data":{"id":123123,"desc":"GET"}}],"level":"info","timestamp":"Jul-09-2024 18:02:16"}
+{"message":[{"message":"Home Page","data":{"id":123123,"desc":"GET"}}],"level":"info","timestamp":"Jul-09-2024 18:03:10"}
+{"message":[{"message":"Home Page","data":{"id":123123,"desc":"GET"}}],"level":"info","timestamp":"Jul-09-2024 18:04:37"}
+{"message":["dataCollection",{"logId":"0a0cdbad","ua":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36","client_ip":"::1"}],"level":"info","timestamp":"Jul-09-2024 18:09:36"}
+{"message":["dataCollection",{"logId":"eb735012","ua":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36","client_ip":"::1"}],"level":"info","timestamp":"Jul-09-2024 18:11:45"}
+{"message":["dataCollection",{"logId":"772f454a","ua":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36","client_ip":"::1"}],"level":"info","timestamp":"Jul-09-2024 18:17:35"}

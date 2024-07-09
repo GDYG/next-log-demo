@@ -1,8 +1,11 @@
 import HomeChild from "./components/HomeChild";
-import { Logger } from "@/server/index";
+import { logger } from "@/server/index";
 
-Logger.info("Home Page", { page_name: "/home" });
 export default function Home() {
+  logger.info({
+    message: "Home Page",
+    data: { id: 123123, desc: "GET" },
+  });
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <h1 className="text-4xl font-bold">Home Page1</h1>

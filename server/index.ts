@@ -1,1 +1,1 @@
-export * from "./logController/logger";
+export { default as logger } from "./controllers/logger";
