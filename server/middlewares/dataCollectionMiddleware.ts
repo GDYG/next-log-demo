@@ -1,12 +1,23 @@
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { v4 as uuidv4 } from "uuid";
 import { logger } from "@/server/index";
-import next from "next";
-import { Params, RequestWithLogFields } from "@/app/api/log/dc/[project]/route";
+import { MiddlewareNext } from "./combineMiddlewares";
+export interface RequestWithLogFields extends NextRequest {
+  log_fields: {
+    logId: string;
+    ua: string;
+    client_ip?: string | null;
+  };
+}
+
+export interface Params {
+  project: string;
+}
 
 async function dataCollectionMiddleware(
   request: RequestWithLogFields,
-  context: { params: Params }
+  context: { params: Params },
+  next: MiddlewareNext
 ) {
   const { headers, cookies, ip } = request;
   const logId = await uuidv4().substring(0, 8);
@@ -28,7 +39,7 @@ async function dataCollectionMiddleware(
 
   logger.info("dataCollection", request.log_fields);
   // 继续处理请求
-  return next({});
+  next();
 }
 
 export default dataCollectionMiddleware;
