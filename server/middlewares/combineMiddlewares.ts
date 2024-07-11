@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { Params, RequestWithLogFields } from "./dataCollectionMiddleware";
 
 export interface MiddlewareNext {
-  (): void | NextResponse;
+  (): void | NextResponse | any;
   (err?: Error): NextResponse;
 }
 
@@ -15,14 +15,14 @@ export interface Middleware {
 }
 
 export function combineMiddlewares(...middlewares: Middleware[]) {
-  return (
+  return async (
     req: RequestWithLogFields,
     context: { params: Params },
     next: MiddlewareNext
   ) => {
     let index = 0;
 
-    function runMiddleware(err?: Error) {
+    async function runMiddleware(err?: Error) {
       if (err) {
         return next(err);
       }
@@ -31,11 +31,11 @@ export function combineMiddlewares(...middlewares: Middleware[]) {
       }
       const middleware = middlewares[index];
       index++;
-      middleware(req, context, runMiddleware as MiddlewareNext);
+      await middleware(req, context, runMiddleware as MiddlewareNext);
     }
 
-    runMiddleware();
+    await runMiddleware();
 
-    return next();
+    console.log(33333);
   };
 }

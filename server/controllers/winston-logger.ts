@@ -12,12 +12,18 @@ type TransformableInfo = {
 const customFormat = format.combine(
   format.timestamp({ format: "MMM-DD-YYYY HH:mm:ss" }),
   format.json(),
-  format.printf((info: TransformableInfo | unknown) => {
-    // const { level, message, timestamp, ...args } = info;
+  format.printf((info: TransformableInfo | any) => {
+    const { level, message, timestamp } = info;
     // return `${level}: ${[timestamp]}: ${message} - ${JSON.stringify(args)}`;
-    return JSON.stringify(info);
+    const data = message?.[0];
+    return JSON.stringify({
+      level,
+      ...data,
+    });
+    // return JSON.stringify(info);
   })
 );
+
 const defaultOptions = {
   format: customFormat,
   datePattern: "YYYY-MM-DD",
@@ -25,8 +31,7 @@ const defaultOptions = {
   maxSize: "20m",
   // maxFiles: "14d",
   frequency: "24h",
-  // meta: false, // 禁用元数据记录
-  meta: true,
+  meta: false, // 禁用元数据记录
 };
 
 const globalLogger = createLogger({
