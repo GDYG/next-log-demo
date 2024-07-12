@@ -1,5 +1,5 @@
+import { Params, RequestWithLogFields } from "@/models/models.types";
 import { NextResponse } from "next/server";
-import { Params, RequestWithLogFields } from "./dataCollectionMiddleware";
 
 export interface MiddlewareNext {
   (): void | NextResponse | any;
@@ -14,28 +14,45 @@ export interface Middleware {
   ): void;
 }
 
+const execMiddleware = async (
+  req: any,
+  res: any,
+  middleware: Middleware[],
+  index = 0
+) => {
+  if (typeof middleware[index] !== "function") {
+    res.status(500).end("Middleware must be a function!");
+    throw new Error("Middleware must be a function!");
+  }
+
+  return await middleware[index](req, res, (async () => {
+    return await execMiddleware(req, res, middleware, index + 1);
+  }) as any);
+};
+
 export function combineMiddlewares(...middlewares: Middleware[]) {
-  return async (
-    req: RequestWithLogFields,
-    context: { params: Params },
-    next: MiddlewareNext
-  ) => {
-    let index = 0;
+  return async (req: RequestWithLogFields, context: { params: Params }) => {
+    // let index = 0;
 
-    async function runMiddleware(err?: Error) {
-      if (err) {
-        return next(err);
-      }
-      if (index >= middlewares.length) {
-        return next();
-      }
-      const middleware = middlewares[index];
-      index++;
-      await middleware(req, context, runMiddleware as MiddlewareNext);
-    }
+    // async function runMiddleware(err?: Error) {
+    //   if (err) {
+    //     return next(err);
+    //   }
+    //   if (index >= middlewares.length) {
+    //     console.log(22222, index);
 
-    await runMiddleware();
+    //     // return;
+    //     throw new Error("error");
+    //   }
+    //   const middleware = middlewares[index];
+    //   index++;
+    //   await middleware(req, context, (async () => {
+    //     (await runMiddleware()) as unknown as MiddlewareNext;
+    //   }) as any);
+    // }
 
-    console.log(33333);
+    // await runMiddleware();
+
+    return await execMiddleware(req, context, middlewares);
   };
 }

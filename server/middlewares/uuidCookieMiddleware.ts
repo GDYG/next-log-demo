@@ -1,8 +1,9 @@
 import { RequestWithLogFields } from "@/middleware";
 import { v4 as _v4 } from "uuid";
-import { Params } from "./dataCollectionMiddleware";
 import { MiddlewareNext } from "./combineMiddlewares";
 import { cookies } from "next/headers";
+import { Params } from "@/models/models.types";
+import { NextResponse } from "next/server";
 
 async function uuidCookieMiddleware(
   request: RequestWithLogFields,
@@ -21,9 +22,12 @@ async function uuidCookieMiddleware(
         httpOnly: true,
       });
     }
-    // next();
+    next();
+    // return NextResponse.json({ message: "success111" });
+    // throw new Error("error");
   } catch (error: any) {
     next(error);
+    throw new Error(error);
   }
 }
 
