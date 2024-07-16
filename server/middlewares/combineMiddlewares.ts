@@ -1,5 +1,5 @@
 import { Params, RequestWithLogFields } from "@/models/models.types";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 export interface MiddlewareNext {
   (): void | NextResponse | any;
@@ -15,44 +15,25 @@ export interface Middleware {
 }
 
 const execMiddleware = async (
-  req: any,
-  res: any,
+  req: RequestWithLogFields,
+  context: { params: Params },
   middleware: Middleware[],
   index = 0
 ) => {
   if (typeof middleware[index] !== "function") {
-    res.status(500).end("Middleware must be a function!");
+    NextResponse.json("Middleware must be a function!", {
+      status: 500,
+    });
     throw new Error("Middleware must be a function!");
   }
 
-  return await middleware[index](req, res, (async () => {
-    return await execMiddleware(req, res, middleware, index + 1);
+  return await middleware[index](req, context, (async () => {
+    await execMiddleware(req, context, middleware, index + 1);
   }) as any);
 };
 
 export function combineMiddlewares(...middlewares: Middleware[]) {
   return async (req: RequestWithLogFields, context: { params: Params }) => {
-    // let index = 0;
-
-    // async function runMiddleware(err?: Error) {
-    //   if (err) {
-    //     return next(err);
-    //   }
-    //   if (index >= middlewares.length) {
-    //     console.log(22222, index);
-
-    //     // return;
-    //     throw new Error("error");
-    //   }
-    //   const middleware = middlewares[index];
-    //   index++;
-    //   await middleware(req, context, (async () => {
-    //     (await runMiddleware()) as unknown as MiddlewareNext;
-    //   }) as any);
-    // }
-
-    // await runMiddleware();
-
-    return await execMiddleware(req, context, middlewares);
+    await execMiddleware(req, context, middlewares);
   };
 }

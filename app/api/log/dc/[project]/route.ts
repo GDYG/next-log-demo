@@ -11,7 +11,7 @@ interface Params {
 
 const middleware_1: any = async (_req: any, _res: any, next: any) => {
   console.log("Running middleware 1");
-  next();
+  await next();
 };
 
 const middleware_2: any = async (_req: any, _res: any, next: any) => {
@@ -20,8 +20,7 @@ const middleware_2: any = async (_req: any, _res: any, next: any) => {
   // sleep for 2.5 seconds
   console.log("Sleeping for 2.5 seconds");
   await new Promise((resolve) => setTimeout(resolve, 2500));
-
-  next();
+  await next();
 };
 
 const middleware_3: any = async (_req: any, _res: any, next: any) => {
@@ -32,12 +31,12 @@ const middleware_3: any = async (_req: any, _res: any, next: any) => {
   const json = await res.json();
   console.log(json);
 
-  next();
+  await next();
 };
 
 const middleware_4: any = async (_req: any, _res: any, next: any) => {
   console.log("Running middleware 4");
-  next();
+  await next();
 };
 
 const hello = async (req: any, res: any) => {
@@ -60,9 +59,9 @@ export async function GET(request: NextRequest, context: { params: Params }) {
       middleware_4,
       hello
     );
-    return await combineMiddleware(request as RequestWithLogFields, context);
 
-    console.log(11111111);
+    return await combineMiddleware(request as RequestWithLogFields, context);
+    console.log("why run?");
 
     // const { searchParams } = new URL(request.url);
     // const query = searchParams.toString();
