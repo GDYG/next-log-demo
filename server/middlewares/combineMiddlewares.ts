@@ -1,5 +1,6 @@
+import { ResponseError } from "@/app/api/common";
 import { Params, RequestWithLogFields } from "@/models/models.types";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
 export interface MiddlewareNext {
   (): void | NextResponse | any;
@@ -14,26 +15,46 @@ export interface Middleware {
   ): void;
 }
 
-const execMiddleware = async (
+const execMiddlewareChain = async (
   req: RequestWithLogFields,
   context: { params: Params },
   middleware: Middleware[],
   index = 0
 ) => {
   if (typeof middleware[index] !== "function") {
-    NextResponse.json("Middleware must be a function!", {
-      status: 500,
-    });
-    throw new Error("Middleware must be a function!");
+    return ResponseError(500, "Middleware must be a function!");
   }
 
-  return await middleware[index](req, context, (async () => {
-    await execMiddleware(req, context, middleware, index + 1);
-  }) as any);
+  let nextInvoked = false;
+  const response = await middleware[index](req, context, (() => {
+    nextInvoked = true;
+  }) as MiddlewareNext);
+
+  if (response !== undefined) {
+    return response;
+  }
+
+  if (nextInvoked) {
+    return await execMiddlewareChain(req, context, middleware, index + 1);
+  }
 };
 
+// TODO: 调用中间件，也许有更好的实现方法，暂时写这两种
 export function combineMiddlewares(...middlewares: Middleware[]) {
   return async (req: RequestWithLogFields, context: { params: Params }) => {
-    await execMiddleware(req, context, middlewares);
+    // let result;
+    // for (let i = 0; i < middlewares.length; i++) {
+    //   let nextInvoked = false;
+    //   const next = async () => {
+    //     nextInvoked = true;
+    //   };
+    //   result = await middlewares[i](req, context, next as MiddlewareNext);
+    //   if (!nextInvoked) {
+    //     break;
+    //   }
+    // }
+    const result = await execMiddlewareChain(req, context, middlewares);
+    if (result !== undefined) return result;
+    throw new Error("Your handler or middleware must return a NextResponse!");
   };
 }

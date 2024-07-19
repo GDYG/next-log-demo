@@ -1,6 +1,6 @@
 import { RequestWithLogFields } from "@/middleware";
-import { Params } from "@/server/middlewares/dataCollectionMiddleware";
 import { v4 as _v4 } from "uuid";
+import { Params } from "./models.types";
 
 /**
  * @function 数据监控-数据埋点
@@ -76,10 +76,10 @@ export type BuriedKeys = (typeof buriedKeys)[number];
 
 export const getInitFields = async (
   request: RequestWithLogFields,
-  context: { params: Params }
+  context: { params: Params },
+  query: URLSearchParams | object
 ) => {
   const { headers, ip, cookies } = request;
-  const { searchParams } = new URL(request.url);
   const client_ip =
     ip || headers.get("x-forwarded-for") || request.headers.get("x-real-ip");
   const project = context.params.project;
@@ -103,7 +103,10 @@ export const getInitFields = async (
   };
 
   buriedKeys.forEach((key) => {
-    logFields[key] = searchParams.get(key) ?? logFields[key];
+    logFields[key] =
+      ((query as URLSearchParams)?.get(key) ||
+        (query as Record<string, any>)?.[key]) ??
+      logFields[key];
   });
 
   return logFields;

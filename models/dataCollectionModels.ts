@@ -6,10 +6,11 @@ import { Params } from "./models.types";
 
 const dataCollectionModels = async (
   request: RequestWithLogFields,
-  context: { params: Params }
+  context: { params: Params },
+  query: URLSearchParams | object
 ) => {
   return new Promise(async (resolve, reject) => {
-    const logFields = await getInitFields(request, context);
+    const logFields = await getInitFields(request, context, query);
     await logger.info(logFields);
     resolve(logFields);
   });
