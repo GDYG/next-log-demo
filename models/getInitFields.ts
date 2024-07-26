@@ -103,10 +103,11 @@ export const getInitFields = async (
   };
 
   buriedKeys.forEach((key) => {
-    logFields[key] =
-      ((query as URLSearchParams)?.get(key) ||
-        (query as Record<string, any>)?.[key]) ??
-      logFields[key];
+    const value =
+      query instanceof URLSearchParams
+        ? (query as URLSearchParams)?.get(key)
+        : (query as Record<string, any>)?.[key];
+    logFields[key] = value ?? logFields[key];
   });
 
   return logFields;
